@@ -2,6 +2,7 @@
 using CardapioDigital.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CardapioDigital.Migrations.DishDb
 {
     [DbContext(typeof(DishDbContext))]
-    partial class DishDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240129220306_AddDescriptionToDish")]
+    partial class AddDescriptionToDish
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
