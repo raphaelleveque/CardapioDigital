@@ -58,14 +58,30 @@ namespace CardapioDigital.Controller
 
         // PUT: api/Ingredient/{ingredientName}
         [HttpPut("ingredientName")]
-        public async Task<ActionResult<Ingredients>> UpdateIngredient(string ingredientName, Ingredients ingredient)
+        public async Task<ActionResult<Ingredients>> UpdateIngredient(string ingredientName, Ingredients updatedIngredient)
         {
-            if (ingredientName != ingredient.Name)
+            var existingIngredient = await _context.Ingredients.FirstOrDefaultAsync(d => d.Name == ingredientName);
+
+            if (existingIngredient == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(ingredient).State = EntityState.Modified;
+            foreach (var property in typeof(Ingredients).GetProperties())
+            {
+                // Ignorar a propriedade Id (chave primária)
+                if (property.Name != "Id")
+                {
+                    // Obter o valor da propriedade no updatedDish
+                    var updatedValue = property.GetValue(updatedIngredient);
+
+                    // Atribuir o valor à propriedade correspondente no existingDish
+                    property.SetValue(existingIngredient, updatedValue);
+                }
+            }
+
+            // Marcar a chave primária como não modificada
+            _context.Entry(existingIngredient).Property(x => x.Id).IsModified = false;
 
             try
             {
