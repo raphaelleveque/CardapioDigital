@@ -1,0 +1,36 @@
+﻿<Properties StartupConfiguration="{BE726BEF-84BB-478F-AAFD-A0A95EE33562}|https">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Models/IngredientDbContext.cs">
+    <Files>
+      <File FileName="appsettings.json" Line="5" Column="11" />
+      <File FileName="Program.cs" Line="10" Column="1" />
+      <File FileName="Models/Ingredients.cs" />
+      <File FileName="Startup.cs" Line="31" Column="82" />
+      <File FileName="Models/DishDbContext.cs" Line="11" Column="6" />
+      <File FileName="Models/IngredientDbContext.cs" Line="5" Column="2" />
+      <File FileName="Migrations/DishDbContextModelSnapshot.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CardapioDigital" expanded="True">
+            <Node name="CardapioDigital" expanded="True">
+              <Node name="Dependencies" expanded="True">
+                <Node name="FrameworkReferences" expanded="True" />
+              </Node>
+              <Node name="Migrations" selected="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Properties" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.CardapioDigital PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+</Properties>
