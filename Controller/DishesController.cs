@@ -44,9 +44,9 @@ namespace CardapioDigital.Controller
             return CreatedAtAction(nameof(GetDishByTitle), new { title = dish.Title }, dish);
         }
 
-        // PUT: api/Dish/{title}
-        [HttpPut("{title}")]
-        public async Task<ActionResult> UpdateDish(string title, Dish updatedDish)
+        // PUT: api/Dish/UpdateIngredients/{title}
+        [HttpPut("UpdateIngredients/{title}")]
+        public async Task<ActionResult> UpdateIngredients(string title, Dish updatedDish)
         {
             var existingDish = await _context.Dishes.FirstOrDefaultAsync(d => d.Title == title);
 
@@ -55,11 +55,13 @@ namespace CardapioDigital.Controller
                 return NotFound();
             }
 
+            await EnsureIngredientsExist(updatedDish);
+
             // Copiar as propriedades modificáveis do updatedDish para o existingDish
             foreach (var property in typeof(Dish).GetProperties())
             {
                 // Ignorar a propriedade Id (chave primária)
-                if (property.Name != "Id")
+                if (property.Name != "Id" && property.Name != "Description" && property.Name != "Title")
                 {
                     // Obter o valor da propriedade no updatedDish
                     var updatedValue = property.GetValue(updatedDish);
@@ -71,6 +73,8 @@ namespace CardapioDigital.Controller
 
             // Marcar a chave primária como não modificada
             _context.Entry(existingDish).Property(x => x.Id).IsModified = false;
+            _context.Entry(existingDish).Property(x => x.Title).IsModified = false;
+            _context.Entry(existingDish).Property(x => x.Description).IsModified = false;
 
             try
             {
@@ -91,6 +95,73 @@ namespace CardapioDigital.Controller
             return NoContent();
         }
 
+        // PUT: api/Dish/UpdateDishTitle/{oldTitle}/{newTitle}
+        [HttpPut("UpdateDishTitle/{oldTitle}/{newTitle}")]
+        public async Task<ActionResult> UpdateDishTitle(string oldTitle, string newTitle)
+        {
+            var existingDish = await _context.Dishes.FirstOrDefaultAsync(d => d.Title == oldTitle);
+
+            if (existingDish == null)
+            {
+                return NotFound();
+            }
+
+            // Atualizar o título do prato
+            existingDish.Title = newTitle;
+
+            try
+            {
+                // Persistir as alterações no banco de dados
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DishExists(newTitle))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // PUT: api/Dish/UpdateDishDescription/{title}
+        [HttpPut("UpdateDishDescription/{title}")]
+        public async Task<ActionResult> UpdateDishDescription(string title, [FromBody] string newDescription)
+        {
+            var existingDish = await _context.Dishes.FirstOrDefaultAsync(d => d.Title == title);
+
+            if (existingDish == null)
+            {
+                return NotFound();
+            }
+
+            // Atualizar o título do prato
+            existingDish.Description = newDescription;
+
+            try
+            {
+                // Persistir as alterações no banco de dados
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DishExists(title))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
 
 
         // DELETE: api/Dish/{title}
