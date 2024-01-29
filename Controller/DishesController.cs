@@ -11,10 +11,12 @@ namespace CardapioDigital.Controller
     public class DishController : ControllerBase
     {
         private readonly DishDbContext _context;
+        private readonly IngredientsController _ingredientsController;
 
-        public DishController(DishDbContext context)
+        public DishController(DishDbContext context, IngredientsController ingredientsController)
         {
             _context = context;
+            _ingredientsController = ingredientsController;
         }
 
         // GET: api/Dish/{title}
@@ -31,10 +33,11 @@ namespace CardapioDigital.Controller
             return dish;
         }
 
-        // POST: api/Dish
-        [HttpPost]
+        // POST: api/Dish/AddDish
+        [HttpPost("AddDish")]
         public async Task<ActionResult<Dish>> AddDish([FromBody] Dish dish)
         {
+            await EnsureIngredientsExist(dish);
             _context.Dishes.Add(dish);
             await _context.SaveChangesAsync();
 
@@ -109,6 +112,31 @@ namespace CardapioDigital.Controller
         private bool DishExists(string title)
         {
             return _context.Dishes.Any(e => e.Title == title);
+        }
+
+        private async Task EnsureIngredientsExist(Dish dish)
+        {
+            var allIngredientsResult = await _ingredientsController.GetAllIngredients();
+
+            if (allIngredientsResult.Result is OkObjectResult okResult && okResult.Value is HashSet<string> allIngredients)
+            {
+                for (int i = 1; i <= 10; i++)
+                {
+                    var ingredientPropertyName = $"Ingredient{i}";
+                    var ingredientValue = dish.GetType().GetProperty(ingredientPropertyName)?.GetValue(dish) as string;
+
+                    if (ingredientValue == null)
+                    {
+                        break;
+                    }
+
+                    if (!allIngredients.Contains(ingredientValue))
+                    {
+                        await _ingredientsController.AddIngredient(new Ingredients { Name = ingredientValue, Available = false });
+                        allIngredients.Add(ingredientValue);
+                    }
+                }
+            }
         }
     }
 }

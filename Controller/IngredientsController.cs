@@ -17,7 +17,7 @@ namespace CardapioDigital.Controller
             _context = context;
         }
 
-        // GET: api/IngredientAvailable/{ingredientName}
+        // GET: api/IsIngredientAvailable/{ingredientName}
         [HttpGet("IsIngredientAvailable/{ingredientName}")]
         public async Task<ActionResult<bool>> IsIngredientAvailable(string ingredientName)
         {
@@ -46,8 +46,18 @@ namespace CardapioDigital.Controller
             return ingredient;
         }
 
+        // GET: api/GetAllIngredients/
+        [HttpGet("GetAllIngredients")]
+        public async Task<ActionResult<HashSet<string>>> GetAllIngredients()
+        {
+            var ingredients = await _context.Ingredients.Select(i => i.Name).ToListAsync();
+            var uniqueIngredients = new HashSet<string>(ingredients);
+
+            return Ok(uniqueIngredients);
+        }
+
         // POST: api/Ingredient
-        [HttpPost]
+        [HttpPost("Ingredient")]
         public async Task<ActionResult<Ingredients>> AddIngredient([FromBody] Ingredients ingredient)
         {
             _context.Ingredients.Add(ingredient);

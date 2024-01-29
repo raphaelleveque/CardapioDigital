@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using CardapioDigital.Controller;
 
 namespace CardapioDigital
 {
@@ -33,6 +34,10 @@ namespace CardapioDigital
             services.AddDbContext<IngredientDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("IngredientsConnection"),
                                  new MySqlServerVersion(new Version(8, 2, 0))));
+
+            services.AddScoped<DishController>();
+            services.AddScoped<IngredientsController>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
