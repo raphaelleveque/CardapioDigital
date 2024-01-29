@@ -43,14 +43,31 @@ namespace CardapioDigital.Controller
 
         // PUT: api/Dish/{title}
         [HttpPut("{title}")]
-        public async Task<ActionResult> UpdateDish(string title, Dish dish)
+        public async Task<ActionResult> UpdateDish(string title, Dish updatedDish)
         {
-            if (title != dish.Title)
+            var existingDish = await _context.Dishes.FirstOrDefaultAsync(d => d.Title == title);
+
+            if (existingDish == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(dish).State = EntityState.Modified;
+            // Copiar as propriedades modificáveis do updatedDish para o existingDish
+            foreach (var property in typeof(Dish).GetProperties())
+            {
+                // Ignorar a propriedade Id (chave primária)
+                if (property.Name != "Id")
+                {
+                    // Obter o valor da propriedade no updatedDish
+                    var updatedValue = property.GetValue(updatedDish);
+
+                    // Atribuir o valor à propriedade correspondente no existingDish
+                    property.SetValue(existingDish, updatedValue);
+                }
+            }
+
+            // Marcar a chave primária como não modificada
+            _context.Entry(existingDish).Property(x => x.Id).IsModified = false;
 
             try
             {
@@ -70,6 +87,8 @@ namespace CardapioDigital.Controller
 
             return NoContent();
         }
+
+
 
         // DELETE: api/Dish/{title}
         [HttpDelete("{title}")]

@@ -1,4 +1,7 @@
-﻿<Properties StartupConfiguration="{BE726BEF-84BB-478F-AAFD-A0A95EE33562}|https">
+﻿<Properties StartupConfiguration="{BE726BEF-84BB-478F-AAFD-A0A95EE33562}|https" GitUserInfo="UsingGIT">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Models/IngredientDbContext.cs">
     <Files>
       <File FileName="appsettings.json" Line="5" Column="11" />
@@ -26,11 +29,6 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.CardapioDigital PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.CardapioDigital PreferredExecutionTarget="/Applications/Google Chrome.app" />
 </Properties>
