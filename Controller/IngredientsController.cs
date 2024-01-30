@@ -56,6 +56,16 @@ namespace CardapioDigital.Controller
             return Ok(uniqueIngredients);
         }
 
+        // GET: api/GetAllIngredientsAndAvailability/
+        [HttpGet("GetAllIngredientsAndAvailability")]
+        public async Task<ActionResult<Dictionary<string, bool>>> GetAllIngredientsAndAvailability()
+        {
+            var ingredients = await _context.Ingredients.ToListAsync();
+            var uniqueIngredients = ingredients.ToDictionary(i => i.Name, i => i.Available);
+
+            return Ok(uniqueIngredients);
+        }
+
         // POST: api/Ingredient
         [HttpPost("Ingredient")]
         public async Task<ActionResult<Ingredients>> AddIngredient([FromBody] Ingredients ingredient)
@@ -66,9 +76,9 @@ namespace CardapioDigital.Controller
             return CreatedAtAction(nameof(GetIngredientByTitle), new { ingredientName = ingredient.Name }, ingredient);
         }
 
-        // PUT: api/Ingredient/{ingredientName}
-        [HttpPut("ingredientName")]
-        public async Task<ActionResult<Ingredients>> UpdateIngredient(string ingredientName, Ingredients updatedIngredient)
+        // PUT: api/UpdateIngredientAvailability/{ingredientName}/{available}
+        [HttpPut("UpdateIngredientAvailability/{ingredientName}/{available}")]
+        public async Task<ActionResult<Ingredients>> UpdateIngredientAvailability(string ingredientName, bool available)
         {
             var existingIngredient = await _context.Ingredients.FirstOrDefaultAsync(d => d.Name == ingredientName);
 
@@ -77,21 +87,7 @@ namespace CardapioDigital.Controller
                 return NotFound();
             }
 
-            foreach (var property in typeof(Ingredients).GetProperties())
-            {
-                // Ignorar a propriedade Id (chave primária)
-                if (property.Name != "Id")
-                {
-                    // Obter o valor da propriedade no updatedDish
-                    var updatedValue = property.GetValue(updatedIngredient);
-
-                    // Atribuir o valor à propriedade correspondente no existingDish
-                    property.SetValue(existingIngredient, updatedValue);
-                }
-            }
-
-            // Marcar a chave primária como não modificada
-            _context.Entry(existingIngredient).Property(x => x.Id).IsModified = false;
+            existingIngredient.Available = available;
 
             try
             {
@@ -100,6 +96,37 @@ namespace CardapioDigital.Controller
             catch (DbUpdateConcurrencyException)
             {
                 if (!IngredientExists(ingredientName))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+
+        // PUT: api/UpdateIngredientName/{oldName}/{newName}
+        [HttpPut("UpdateIngredientName/{oldName}/{newName}")]
+        public async Task<ActionResult<Ingredients>> UpdateIngredientName(string oldName, string newName)
+        {
+            var existingIngredient = await _context.Ingredients.FirstOrDefaultAsync(d => d.Name == oldName);
+
+            if (existingIngredient == null)
+            {
+                return NotFound();
+            }
+
+            existingIngredient.Name = newName;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!IngredientExists(newName))
                 {
                     return NotFound();
                 }
