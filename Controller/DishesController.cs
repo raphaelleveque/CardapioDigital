@@ -180,6 +180,43 @@ namespace CardapioDigital.Controller
             return NoContent();
         }
 
+        [HttpGet("GetDishesWithAvailableIngredients")]
+        public async Task<ActionResult<IEnumerable<Dish>>> GetDishesWithAvailableIngredients()
+        {
+            // Obtém o dicionário de ingredientes e disponibilidade
+            var ingredientsAvailabilityResult = await _ingredientsController.GetAllIngredientsAndAvailability();
+
+            if (ingredientsAvailabilityResult.Result is OkObjectResult okResult && okResult.Value is Dictionary<string, bool> ingredientsAvailability)
+            {
+                // Carrega todos os pratos para o lado do cliente
+                var allDishes = await _context.Dishes.ToListAsync();
+
+                // Filtra os pratos com todos os ingredientes disponíveis
+                var availableDishes = allDishes
+                    .Where(dish => AreAllIngredientsAvailable(dish, ingredientsAvailability))
+                    .ToList();
+
+                return Ok(availableDishes);
+            }
+
+            return BadRequest();
+        }
+
+        private bool AreAllIngredientsAvailable(Dish dish, Dictionary<string, bool> ingredientsAvailability)
+        {
+            // Obtém as propriedades de ingredientes da classe Dish
+            var dishIngredients = typeof(Dish).GetProperties()
+                .Where(property => property.Name.StartsWith("Ingredient"))
+                .Select(property => property.GetValue(dish)?.ToString())
+                .Where(ingredient => !string.IsNullOrEmpty(ingredient));
+
+            // Verifica se todos os ingredientes estão presentes no dicionário e disponíveis
+            return dishIngredients.All(ingredient =>
+                ingredientsAvailability.TryGetValue(ingredient, out var isAvailable) && isAvailable);
+        }
+
+
+
         private bool DishExists(string title)
         {
             return _context.Dishes.Any(e => e.Title == title);

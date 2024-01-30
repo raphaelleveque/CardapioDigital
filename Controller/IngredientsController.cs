@@ -153,6 +153,19 @@ namespace CardapioDigital.Controller
             return NoContent();
         }
 
+        [HttpPut("LetAllIngredientsAvailable")]
+        public async Task<ActionResult> LetAllIngredientsAvailable()
+        {
+            await _context.Ingredients
+                .ForEachAsync(ingredient => ingredient.Available = true);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+
         private bool IngredientExists(string ingredientName)
         {
             return _context.Ingredients.Any(e => e.Name == ingredientName);
